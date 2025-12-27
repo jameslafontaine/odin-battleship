@@ -1,0 +1,31 @@
+/* ==========================================================================
+   Boilerplate CSS file for layout styles
+   ========================================================================== */
+
+/* ==========================================================================
+   Layout (page-level grids, flex containers, major page regions like header, footer, sidebar)
+   ========================================================================== */
+/* #region */
+
+/* ------------------------------
+    Header
+    ------------------------------ */
+
+/* ------------------------------
+    Sidebar
+    ------------------------------ */
+
+/* ------------------------------
+    Content
+    ------------------------------ */
+
+/* Media queries for responsive layout: go here, because the layout is what changes at breakpoints: */
+@media (max-width: 768px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Avoid putting component-specific media queries here — keep layout-related responsiveness separate. */
+
+/* #endregion */

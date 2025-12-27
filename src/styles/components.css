@@ -1,0 +1,29 @@
+/* ==========================================================================
+   Boilerplate CSS file for component styles
+   ========================================================================== */
+
+/* ==========================================================================
+   Components (cards, buttons, inputs, navbar items, self-contained reusable UI pieces, etc.)
+   ========================================================================== */
+/* #region */
+
+/* Component-level media queries live here if the component needs to adapt at different screen sizes: */
+.card {
+    padding: var(--spacing-md);
+}
+
+@media (max-width: 500px) {
+    .card {
+        padding: var(--spacing-sm);
+    }
+}
+
+/* Dark mode for component styles: can also go here if the component itself needs to switch colors: */
+
+@media (prefers-color-scheme: dark) {
+    .card {
+        background: var(--surface-alt);
+    }
+}
+
+/* #endregion */

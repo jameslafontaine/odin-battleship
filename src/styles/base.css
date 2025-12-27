@@ -1,0 +1,348 @@
+/* ==========================================================================
+   Boilerplate CSS file for base styles
+   ========================================================================== */
+
+/* ==========================================================================
+   Base styles (resets, normalisations, typography)
+   ========================================================================== */
+/* #region */
+/* ------------------------------
+    Reset / Normalise
+   ------------------------------ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+
+    /* Debug */
+    outline: 2px solid red;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+    display: block;
+    max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+/* ------------------------------
+    Base Styles
+    ------------------------------ */
+body {
+    background-color: var(--color-bg-main);
+}
+
+/* Dark mode overrides for base styles go here only if they affect global elements, e.g., body background and text: */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--color-bg-main);
+        color: var(--color-text-primary);
+    }
+}
+
+/* ------------------------------
+    Typography
+    ------------------------------ */
+html {
+    font-family: var(--font-family-base, system-ui, sans-serif);
+    /* 62.5% -> 1rem = 10px if browser default is 16px. Can also set to common values like 16px or 18px and all elements 
+    which use rem will automatically scale */
+    font-size: 16px;
+    line-height: var(--line-height-md);
+    color: var(--color-text-primary);
+}
+
+/* All headings common styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: var(--font-weight-bold);
+    line-height: var(--line-height-md);
+    /* slightly more breathing room */
+    margin-top: 0;
+    /* remove extra spacing above headings */
+    margin-bottom: var(--spacing-sm);
+    /* default spacing below headings */
+}
+
+/* Specific heading sizes and refined spacing */
+h1 {
+    font-size: var(--font-size-3xl);
+    /* 2.5rem, main page/project heading */
+    margin-bottom: var(--spacing-2xl);
+    /* more space for main heading */
+}
+
+h2 {
+    font-size: var(--font-size-2xl);
+    /* 2rem, section heading */
+    margin-bottom: var(--spacing-xl);
+}
+
+h3 {
+    font-size: var(--font-size-xl);
+    /* 1.75rem, sub-section heading */
+    margin-bottom: var(--spacing-lg);
+}
+
+h4 {
+    font-size: var(--font-size-lg);
+    /* 1.5rem, optional sub-subsection */
+    margin-bottom: var(--spacing-md);
+}
+
+h5 {
+    font-size: var(--font-size-md);
+    /* 1.3rem */
+    margin-bottom: var(--spacing-sm);
+}
+
+h6 {
+    font-size: var(--font-size-sm);
+    /* 1.15rem */
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Paragraphs / body text */
+p,
+li,
+span {
+    font-size: var(--font-size-md);
+    /* 1.3rem, readable base text */
+    line-height: var(--line-height-lg);
+    /* comfortable spacing for multi-line text */
+    margin: 0 0 var(--spacing-md);
+}
+
+/* Links / inline text */
+a {
+    text-decoration: none;
+    color: var(--color-text-primary);
+}
+
+a:hover {
+    color: var(--color-accent);
+}
+
+/* Optional smaller notes or meta text */
+small {
+    font-size: var(--font-size-sm);
+    line-height: var(--line-height-md);
+    color: var(--color-text-secondary);
+}
+
+/* #endregion */
+
+
+/* || More Resets */
+/* 
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    outline: 2px solid red;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    font-family: var(--font-family-base, system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol");
+}
+
+
+
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+    display: block;
+}
+
+body {
+    line-height: 1;
+}
+
+ol,
+ul {
+    list-style: none;
+}
+
+blockquote,
+q {
+    quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+    content: '';
+    content: none;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+*/
+
+/* || Tables */
+
+/*
+
+html {
+    font-family: sans-serif;
+}
+
+table {
+    border-collapse: collapse;
+    border: 2px solid var(--color-border-default);
+    letter-spacing: 1px;
+    font-size: 0.8rem;
+}
+
+td,
+th {
+    border: 1px solid var(--color-border-muted);
+    padding: var(--spacing-md) var(--spacing-lg);
+}
+
+th {
+    background-color: var(--color-bg-card);
+}
+
+td {
+    text-align: center;
+}
+
+tr:nth-child(even) td {
+    background-color: var(--color-bg-main);
+}
+
+tr:nth-child(odd) td {
+    background-color: var(--color-bg-card);
+}
+
+caption {
+    padding: var(--spacing-md);
+}
+*/

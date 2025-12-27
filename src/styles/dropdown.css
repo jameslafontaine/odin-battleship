@@ -1,0 +1,37 @@
+.dropdowns-section button:hover {
+    background-color: lightgrey;
+}
+
+.dropdowns-section {
+    display: flex;
+    gap: 50px;
+}
+
+.dropdown-container {
+    display: flex;
+    flex-direction: column;
+    width: 15%;
+}
+
+.dropdown-button {
+    border: 3px inset black;
+}
+
+.dropdown-list {
+    position: absolute;
+    width: 15%;
+    margin-top: 0;
+    display: none;
+    padding-left: 0; /* Removes default list left padding */
+    margin-left: 0; /* Removes default list left margin */
+}
+
+.dropdown-item {
+    list-style: none;
+    border: 3px inset black;
+    text-align: center;
+}
+
+.visible {
+    display: block;
+}
