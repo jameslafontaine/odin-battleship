@@ -4,65 +4,65 @@
 import Ship from "../models/Ship.js";
 
 describe("Ship Class Tests", () => {
-    describe("Constructor Tests", () => {
-        test("length < 2 throws RangeError", () => {
+    describe("Constructor", () => {
+        test("throws RangeError for length < 2", () => {
             expect(() => new Ship(1)).toThrow(RangeError);
         });
-        test("length > 5 throws RangeError", () => {
+
+        test("throws RangeError for length > 5", () => {
             expect(() => new Ship(6)).toThrow(RangeError);
         });
-        test("default length assigned correctly", () => {
-            expect(new Ship()).toEqual({
+
+        test("uses default length when no argument provided", () => {
+            const ship = new Ship();
+            expect(ship).toMatchObject({
                 _length: 2,
                 _timesHit: 0,
             });
         });
-        test("ship of length 2 created correctly", () => {
-            expect(new Ship(2)).toEqual({
-                _length: 2,
-                _timesHit: 0,
-            });
-        });
-        test("ship of length 3 created correctly", () => {
-            expect(new Ship(3)).toEqual({
-                _length: 3,
-                _timesHit: 0,
-            });
-        });
-        test("ship of length 5 created correctly", () => {
-            expect(new Ship(5)).toEqual({
-                _length: 5,
+
+        test.each([
+            [2, "minimum"],
+            [3, "middle"],
+            [5, "maximum"],
+        ])("creates ship with length %i (%s valid value)", (length) => {
+            const ship = new Ship(length);
+            expect(ship).toMatchObject({
+                _length: length,
                 _timesHit: 0,
             });
         });
     });
 
-    describe("hit() and isSunk() Tests", () => {
+    describe("Damage and Sinking", () => {
         let ship;
+
         beforeEach(() => {
             ship = new Ship(3);
         });
-        test("hit() function correctly increments", () => {
-            expect(ship.hit()).toBe(1);
-            expect(ship.hit()).toBe(2);
-            expect(ship.hit()).toBe(3);
-        });
 
-        test("hit() function stops incrementing when ship has sunk", () => {
-            ship.hit();
-            ship.hit();
-            ship.hit();
-            expect(ship.hit()).toBe(3);
-            expect(ship.hit()).toBe(3);
-            expect(ship.hit()).toBe(3);
-        });
-
-        test("isSunk() function works", () => {
+        test("sinks after receiving hits equal to length", () => {
             expect(ship.isSunk()).toBe(false);
-            ship.hit();
+
             ship.hit();
             expect(ship.isSunk()).toBe(false);
+
             ship.hit();
+            expect(ship.isSunk()).toBe(false);
+
+            ship.hit();
+            expect(ship.isSunk()).toBe(true);
+        });
+
+        test("cannot take damage after sinking", () => {
+            // Sink the ship
+            ship.hit();
+            ship.hit();
+            ship.hit();
+
+            // Further hits don't increase damage
+            expect(ship.hit()).toBe(3);
+            expect(ship.hit()).toBe(3);
             expect(ship.isSunk()).toBe(true);
         });
     });

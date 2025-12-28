@@ -7,14 +7,6 @@ export default class Ship {
         this._timesHit = 0;
     }
 
-    get length() {
-        return this._length;
-    }
-
-    get timesHit() {
-        return this._timesHit;
-    }
-
     hit() {
         if (!this.isSunk()) this._timesHit++;
         return this._timesHit;
