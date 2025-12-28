@@ -5,6 +5,11 @@ import Ship from "../models/Ship.js";
 
 describe("Ship Class Tests", () => {
     describe("Constructor", () => {
+        test("throws TypeError for non-integer length", () => {
+            expect(() => new Ship("1")).toThrow(TypeError);
+            expect(() => new Ship(1.1)).toThrow(TypeError);
+            expect(() => new Ship(false)).toThrow(TypeError);
+        });
         test("throws RangeError for length < 2", () => {
             expect(() => new Ship(1)).toThrow(RangeError);
         });
@@ -15,10 +20,7 @@ describe("Ship Class Tests", () => {
 
         test("uses default length when no argument provided", () => {
             const ship = new Ship();
-            expect(ship).toMatchObject({
-                _length: 2,
-                _timesHit: 0,
-            });
+            expect(ship.length).toBe(2);
         });
 
         test.each([
@@ -27,10 +29,7 @@ describe("Ship Class Tests", () => {
             [5, "maximum"],
         ])("creates ship with length %i (%s valid value)", (length) => {
             const ship = new Ship(length);
-            expect(ship).toMatchObject({
-                _length: length,
-                _timesHit: 0,
-            });
+            expect(ship.length).toBe(length);
         });
     });
 
