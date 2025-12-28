@@ -1,0 +1,33 @@
+# Build artifacts
+dist/
+build/
+public/
+
+# Dependencies
+node_modules/
+
+# Testing
+coverage/
+
+# System files
+.DS_Store
+*.log
+
+# Assets (Prettier cannot format these)
+src/assets/img/**
+src/assets/font/**
+src/assets/video/**
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+*.ttf
+*.woff
+*.woff2
+
+# Minified output
+*.min.js
+*.min.css
+*.min.html

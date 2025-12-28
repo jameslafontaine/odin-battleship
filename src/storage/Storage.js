@@ -20,7 +20,7 @@ export const Storage = {
      */
     save(data) {
         try {
-            const serialized = JSON.stringify(data);   // serialize
+            const serialized = JSON.stringify(data); // serialize
             localStorage.setItem(STORAGE_KEY, serialized);
         } catch (error) {
             console.error("Storage.save() failed:", error);
@@ -62,5 +62,5 @@ export const Storage = {
      */
     exists() {
         return localStorage.getItem(STORAGE_KEY) !== null;
-    }
+    },
 };

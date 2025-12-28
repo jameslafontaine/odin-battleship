@@ -318,22 +318,38 @@
     "wsl-utils": "^0.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.5",
+    "@babel/preset-env": "^7.28.5",
+    "@eslint/js": "9.39.2",
+    "babel-jest": "^30.2.0",
+    "babel-loader": "^10.0.0",
     "css-loader": "^7.1.2",
-    "css-minimizer-webpack-plugin": "^7.0.2",
+    "css-minimizer-webpack-plugin": "^7.0.4",
+    "eslint": "9.39.2",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-prettier": "5.5.4",
+    "globals": "16.5.0",
     "html-loader": "^5.1.0",
-    "html-webpack-plugin": "^5.6.4",
+    "html-webpack-plugin": "^5.6.5",
+    "jest": "^30.2.0",
+    "prettier": "3.7.4",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.16",
-    "webpack": "^5.102.1",
+    "webpack": "^5.104.1",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2",
     "webpack-merge": "^6.0.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "webpack --config webpack.prod.js",
     "dev": "webpack serve --config webpack.dev.js",
-    "deploy": "git subtree push --prefix dist origin gh-pages"
+    "deploy": "git subtree push --prefix dist origin gh-pages",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
