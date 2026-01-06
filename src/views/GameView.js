@@ -170,6 +170,11 @@ export class GameView {
         this.opponentGrid.classList.remove("sleeping");
     }
 
+    enableGrids() {
+        this.playerGrid.classList.remove("disabled");
+        this.opponentGrid.classList.remove("disabled");
+    }
+
     #renderRemainingShips(opponent) {
         const shipCountContainer = this.container.querySelector(".ship-count-container");
         const totalShips = opponent.gameboard.ships.length;

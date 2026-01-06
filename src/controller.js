@@ -69,6 +69,7 @@ function startNewGame(formData) {
     renderAll(playerOne, playerTwo);
     gameView.renderGameMessage(`It's ${playerOne.name}'s turn.`);
     gameView.wakeGrids();
+    gameView.enableGrids();
 }
 
 async function handlePlayerTurn(x, y, gameId) {

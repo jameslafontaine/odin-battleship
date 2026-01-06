@@ -75,7 +75,7 @@ function initialisePlayers(formData) {
             playerOne = new ComputerPlayer(playerOneName, boardSize, formData["strategy-1"]);
             break;
         default:
-            throw new Error("Invalid player type for Player 1");
+            playerOne = new RealPlayer(playerOneName, boardSize);
     }
 
     // Player Two
@@ -87,7 +87,7 @@ function initialisePlayers(formData) {
             playerTwo = new ComputerPlayer(playerTwoName, boardSize, formData["strategy-2"]);
             break;
         default:
-            throw new Error("Invalid player type for Player 2");
+            playerTwo = new ComputerPlayer(playerTwoName, boardSize, formData["strategy-2"]);
     }
 
     return { playerOne, playerTwo };

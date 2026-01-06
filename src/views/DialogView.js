@@ -45,7 +45,7 @@ export class DialogView {
         // Buttons are expected, but are still optional for flexibility
         this.form = dialogElement.querySelector("form");
         this.submitButton = dialogElement.querySelector(".submit-button");
-        this.cancelButton = dialogElement.querySelector(".cancel-button");
+        this.closeButton = dialogElement.querySelector(".close-dialog-button");
 
         this._onSubmit = null;
         this._onCancel = null;
@@ -100,8 +100,8 @@ export class DialogView {
             });
         }
 
-        if (this.cancelButton) {
-            this.cancelButton.addEventListener("click", () => {
+        if (this.closeButton) {
+            this.closeButton.addEventListener("click", () => {
                 this._onCancel?.();
                 this.close();
             });

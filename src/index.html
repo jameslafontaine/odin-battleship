@@ -12,29 +12,43 @@
         <dialog class="new-game-dialog">
             <form method="dialog">
                 <label for="board-size-input">Board Size:</label>
-                <input type="range" name="board-size" id="board-size-input" min="5" max="10" value="5" />
+                <div class="range-wrapper" style="display: flex; align-items: center; gap: 0.75rem">
+                    <span
+                        class="range-min"
+                        aria-hidden="true"
+                        style="min-width: 2rem; text-align: left; color: var(--muted-text, #cbd5e1)"
+                        >5</span
+                    >
+                    <input type="range" name="board-size" id="board-size-input" min="5" max="10" value="5" />
+                    <span
+                        class="range-max"
+                        aria-hidden="true"
+                        style="min-width: 2rem; text-align: right; color: var(--muted-text, #cbd5e1)"
+                        >10</span
+                    >
+                </div>
 
                 <fieldset id="player-one-inputs">
                     <legend>Player 1</legend>
                     <label for="player-name-1">Player Name:</label>
                     <input type="text" name="player-name-1" id="player-name-1" required />
 
-                    <fieldset>
+                    <!--                     <fieldset>
                         <legend>Player Type:</legend>
                         <input type="radio" name="player-type-1" value="real" id="player-type-real-1" checked />
                         <label for="player-type-real-1">Real</label>
 
                         <input type="radio" name="player-type-1" value="comp" id="player-type-comp-1" />
                         <label for="player-type-comp-1">Computer</label>
-                    </fieldset>
-                    <fieldset id="computer-inputs-2">
+                    </fieldset> -->
+                    <!--                     <fieldset id="computer-inputs-2">
                         <legend>Computer Strategy:</legend>
                         <input type="radio" name="strategy-1" value="random" id="strategy-random-1" checked />
                         <label for="strategy-random-1">Random</label>
 
                         <input type="radio" name="strategy-1" value="hunt" id="strategy-hunt-1" />
                         <label for="strategy-hunt-1">Hunt and Target</label>
-                    </fieldset>
+                    </fieldset> -->
                 </fieldset>
 
                 <fieldset id="player-two-inputs">
@@ -49,14 +63,14 @@
                         required
                     />
 
-                    <fieldset>
+                    <!--                     <fieldset>
                         <legend>Player Type:</legend>
                         <input type="radio" name="player-type-2" value="real" id="player-type-real-2" />
                         <label for="player-type-real-2">Real</label>
 
                         <input type="radio" name="player-type-2" value="comp" id="player-type-comp-2" checked />
                         <label for="player-type-comp-2">Computer</label>
-                    </fieldset>
+                    </fieldset> -->
                     <fieldset id="computer-inputs-2">
                         <legend>Computer Strategy:</legend>
                         <input type="radio" name="strategy-2" value="random" id="strategy-random-2" checked />
@@ -68,14 +82,25 @@
                 </fieldset>
                 <button class="submit-button">Start Game</button>
             </form>
-            <button class="cancel-button">Cancel</button>
+            <!-- modern close button (type=button so it doesn't submit/close form accidentally) -->
+            <button class="close-dialog-button" type="button" aria-label="Close dialog">&times;</button>
         </dialog>
+        <script>
+            (function () {
+                const input = document.getElementById("board-size-input");
+                if (!input) return;
+                const minEl = input.closest(".range-wrapper")?.querySelector(".range-min");
+                const maxEl = input.closest(".range-wrapper")?.querySelector(".range-max");
+                if (minEl) minEl.textContent = input.min;
+                if (maxEl) maxEl.textContent = input.max;
+            })();
+        </script>
 
         <main class="game-container">
             <div class="top-panel">
                 <div class="battleship-logo">
                     <img src="./assets/img/boat.svg" width="120" />
-                    <h1>Battleship</h1>
+                    <h1>BATTLESHIP</h1>
                 </div>
                 <div class="message-container"></div>
                 <button class="new-game-button">Start New Game</button>

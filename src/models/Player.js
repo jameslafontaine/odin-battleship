@@ -99,8 +99,8 @@ export class ComputerPlayer extends Player {
             case "random":
                 return this.#randomAttack(opponentBoard);
             // Future strategies:
-            // case 'hunt':
-            //     return this.#huntAndTargetAttack(opponentBoard);
+            case "hunt":
+                return this.#huntAndTargetAttack(opponentBoard);
             // case 'smart':
             //     return this.#smartAttack(opponentBoard);
             default:
@@ -128,7 +128,59 @@ export class ComputerPlayer extends Player {
     // Future: Add more sophisticated AI methods
 
     // Hunt with checkerboard pattern. Target adjacent cells after hit. Follow ship direction once found
-    // #huntAndTargetAttack(opponentBoard) { ... }
+    #huntAndTargetAttack(opponentBoard) {
+        const size = opponentBoard.size;
+        const board = opponentBoard.board || [];
+
+        const isHit = (val) => {
+            if (val == null) return false;
+            const s = String(val).toLowerCase();
+            return s.includes("hit") || s === "x" || s === "h";
+        };
+
+        // 1) Target adjacent cells around any known hits first
+        for (let row = 0; row < board.length; row++) {
+            for (let col = 0; col < (board[row] || []).length; col++) {
+                if (!isHit(board[row][col])) continue;
+                const neighbours = [
+                    [col + 1, row],
+                    [col - 1, row],
+                    [col, row + 1],
+                    [col, row - 1],
+                ];
+                for (const [nx, ny] of neighbours) {
+                    if (nx < 0 || ny < 0 || nx >= size || ny >= size) continue;
+                    const key = `${nx},${ny}`;
+                    if (this.#attackHistory.has(key)) continue;
+                    return [nx, ny];
+                }
+            }
+        }
+
+        // 2) Hunt phase: checkerboard pattern to maximize chances
+        const huntCandidates = [];
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                const key = `${x},${y}`;
+                if (this.#attackHistory.has(key)) continue;
+                if ((x + y) % 2 === 0) huntCandidates.push([x, y]);
+            }
+        }
+        if (huntCandidates.length) {
+            return huntCandidates[Math.floor(Math.random() * huntCandidates.length)];
+        }
+
+        // 3) Fallback: pick any unattacked cell
+        for (let x = 0; x < size; x++) {
+            for (let y = 0; y < size; y++) {
+                const key = `${x},${y}`;
+                if (!this.#attackHistory.has(key)) return [x, y];
+            }
+        }
+
+        // Shouldn't happen due to checks in attack(), but return safe coords
+        return [0, 0];
+    }
 
     /* Probability calculations (where ships CAN be)
     Ship size awareness (what ships REMAIN)
