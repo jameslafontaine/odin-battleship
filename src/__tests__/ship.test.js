@@ -1,7 +1,5 @@
-// Jest globals (describe, test, expect) are automatically available!
-// No need to import them thanks to jest.config.js
-
 import Ship from "../models/Ship.js";
+import { MIN_SHIP_LENGTH, MAX_SHIP_LENGTH, DEFAULT_SHIP_LENGTH } from "../models/Constants.js";
 
 describe("Ship Class Tests", () => {
     describe("Constructor", () => {
@@ -10,23 +8,24 @@ describe("Ship Class Tests", () => {
             expect(() => new Ship(1.1)).toThrow(TypeError);
             expect(() => new Ship(false)).toThrow(TypeError);
         });
-        test("throws RangeError for length < 2", () => {
-            expect(() => new Ship(1)).toThrow(RangeError);
+
+        test("throws RangeError for length below minimum", () => {
+            expect(() => new Ship(MIN_SHIP_LENGTH - 1)).toThrow(RangeError);
         });
 
-        test("throws RangeError for length > 5", () => {
-            expect(() => new Ship(6)).toThrow(RangeError);
+        test("throws RangeError for length above maximum", () => {
+            expect(() => new Ship(MAX_SHIP_LENGTH + 1)).toThrow(RangeError);
         });
 
         test("uses default length when no argument provided", () => {
             const ship = new Ship();
-            expect(ship.length).toBe(2);
+            expect(ship.length).toBe(DEFAULT_SHIP_LENGTH);
         });
 
         test.each([
-            [2, "minimum"],
+            [MIN_SHIP_LENGTH, "minimum"],
             [3, "middle"],
-            [5, "maximum"],
+            [MAX_SHIP_LENGTH, "maximum"],
         ])("creates ship with length %i (%s valid value)", (length) => {
             const ship = new Ship(length);
             expect(ship.length).toBe(length);

@@ -1,4 +1,5 @@
 import Gameboard from "./Gameboard.js";
+import { DEFAULT_BOARD_SIZE, DEFAULT_COMPUTER_NAME, DEFAULT_AI_STRATEGY } from "./Constants.js";
 
 /**
  * Base class for all players
@@ -8,7 +9,7 @@ class Player {
     #name;
     #gameboard;
 
-    constructor(name, boardSize = 10) {
+    constructor(name, boardSize = DEFAULT_BOARD_SIZE) {
         if (typeof name !== "string" || name.trim() === "") {
             throw new TypeError("Player name must be a non-empty string");
         }
@@ -41,7 +42,7 @@ class Player {
  * Human player - receives coordinates from UI
  */
 export class RealPlayer extends Player {
-    constructor(name, boardSize = 10) {
+    constructor(name, boardSize = DEFAULT_BOARD_SIZE) {
         super(name, boardSize);
     }
 
@@ -67,7 +68,7 @@ export class ComputerPlayer extends Player {
     #attackHistory;
     #aiStrategy;
 
-    constructor(name = "Computer", boardSize = 10, aiStrategy = "random") {
+    constructor(name = DEFAULT_COMPUTER_NAME, boardSize = DEFAULT_BOARD_SIZE, aiStrategy = DEFAULT_AI_STRATEGY) {
         super(name, boardSize);
         this.#attackHistory = new Set(); // Track attempted attacks
         this.#aiStrategy = aiStrategy; // Future: 'hunt', 'smart'

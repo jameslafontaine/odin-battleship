@@ -1,5 +1,13 @@
 import { RealPlayer, ComputerPlayer } from "../models/Player.js";
 import Gameboard from "../models/Gameboard.js";
+import {
+    MIN_BOARD_SIZE,
+    MAX_BOARD_SIZE,
+    DEFAULT_BOARD_SIZE,
+    DIRECTIONS,
+    ATTACK_RESULTS,
+    DEFAULT_COMPUTER_NAME,
+} from "../models/Constants.js";
 
 describe("Player Classes Tests", () => {
     describe("RealPlayer Tests", () => {
@@ -8,7 +16,7 @@ describe("Player Classes Tests", () => {
                 const player = new RealPlayer("Alice");
                 expect(player.name).toBe("Alice");
                 expect(player.gameboard).toBeInstanceOf(Gameboard);
-                expect(player.gameboard.size).toBe(10);
+                expect(player.gameboard.size).toBe(DEFAULT_BOARD_SIZE);
             });
 
             test("creates player with custom board size", () => {
@@ -34,8 +42,8 @@ describe("Player Classes Tests", () => {
             });
 
             test("throws error for invalid board size (delegated to Gameboard)", () => {
-                expect(() => new RealPlayer("Alice", 3)).toThrow(RangeError);
-                expect(() => new RealPlayer("Alice", 15)).toThrow(RangeError);
+                expect(() => new RealPlayer("Alice", MIN_BOARD_SIZE - 2)).toThrow(RangeError);
+                expect(() => new RealPlayer("Alice", MAX_BOARD_SIZE + 5)).toThrow(RangeError);
                 expect(() => new RealPlayer("Alice", "10")).toThrow(TypeError);
             });
         });
@@ -46,7 +54,7 @@ describe("Player Classes Tests", () => {
                 const player2 = new RealPlayer("Bob");
 
                 // Place ship on player1's board
-                player1.gameboard.placeShip(0, 0, 3, "E");
+                player1.gameboard.placeShip(0, 0, 3, DIRECTIONS.EAST);
 
                 // player2's board should be unaffected
                 expect(player2.gameboard.ships).toHaveLength(0);
@@ -60,24 +68,24 @@ describe("Player Classes Tests", () => {
             beforeEach(() => {
                 player1 = new RealPlayer("Alice");
                 player2 = new RealPlayer("Bob");
-                player2.gameboard.placeShip(0, 0, 2, "E"); // Ship 1
-                player2.gameboard.placeShip(0, 1, 2, "E"); // Ship 2
+                player2.gameboard.placeShip(0, 0, 2, DIRECTIONS.EAST); // Ship 1
+                player2.gameboard.placeShip(0, 1, 2, DIRECTIONS.EAST); // Ship 2
             });
 
             test("successfully attacks with valid coordinates", () => {
                 const result = player1.attack(player2.gameboard, 0, 0);
-                expect(result.result).toBe("hit");
+                expect(result.result).toBe(ATTACK_RESULTS.HIT);
             });
 
             test("returns 'miss' for empty water", () => {
                 const result = player1.attack(player2.gameboard, 5, 5);
-                expect(result.result).toBe("miss");
+                expect(result.result).toBe(ATTACK_RESULTS.MISS);
             });
 
             test("returns 'sunk' when ship is destroyed", () => {
                 player1.attack(player2.gameboard, 0, 0); // Hit ship 1
                 const result = player1.attack(player2.gameboard, 1, 0); // Sink ship 1
-                expect(result.result).toBe("sunk");
+                expect(result.result).toBe(ATTACK_RESULTS.SUNK);
             });
 
             test("returns 'sunk-all' when all ships destroyed", () => {
@@ -89,7 +97,7 @@ describe("Player Classes Tests", () => {
                 player1.attack(player2.gameboard, 0, 1);
                 const result = player1.attack(player2.gameboard, 1, 1);
 
-                expect(result.result).toBe("sunk-all");
+                expect(result.result).toBe(ATTACK_RESULTS.SUNK_ALL);
             });
 
             test("throws error when coordinates not provided", () => {
@@ -104,7 +112,7 @@ describe("Player Classes Tests", () => {
 
             test("throws RangeError for out-of-bounds coordinates", () => {
                 expect(() => player1.attack(player2.gameboard, -1, 0)).toThrow(RangeError);
-                expect(() => player1.attack(player2.gameboard, 15, 0)).toThrow(RangeError);
+                expect(() => player1.attack(player2.gameboard, MAX_BOARD_SIZE + 5, 0)).toThrow(RangeError);
             });
 
             test("throws error when attacking same cell twice", () => {
@@ -118,9 +126,9 @@ describe("Player Classes Tests", () => {
         describe("Constructor Tests", () => {
             test("creates computer player with default name", () => {
                 const computer = new ComputerPlayer();
-                expect(computer.name).toBe("Computer");
+                expect(computer.name).toBe(DEFAULT_COMPUTER_NAME);
                 expect(computer.gameboard).toBeInstanceOf(Gameboard);
-                expect(computer.gameboard.size).toBe(10);
+                expect(computer.gameboard.size).toBe(DEFAULT_BOARD_SIZE);
             });
 
             test("creates computer player with custom name", () => {
@@ -145,12 +153,12 @@ describe("Player Classes Tests", () => {
             beforeEach(() => {
                 computer = new ComputerPlayer("AI");
                 opponent = new RealPlayer("Human");
-                opponent.gameboard.placeShip(0, 0, 5, "E");
+                opponent.gameboard.placeShip(0, 0, 5, DIRECTIONS.EAST);
             });
 
             test("generates attack automatically without coordinates", () => {
                 const result = computer.attack(opponent.gameboard);
-                expect(["hit", "miss"]).toContain(result.result);
+                expect([ATTACK_RESULTS.HIT, ATTACK_RESULTS.MISS]).toContain(result.result);
             });
 
             test("generates coordinates within board bounds", () => {
@@ -158,7 +166,12 @@ describe("Player Classes Tests", () => {
                 for (let i = 0; i < 20; i++) {
                     const result = computer.attack(opponent.gameboard);
                     // If we get here without throwing, coordinates were valid
-                    expect(["hit", "miss", "sunk", "sunk-all"]).toContain(result.result);
+                    expect([
+                        ATTACK_RESULTS.HIT,
+                        ATTACK_RESULTS.MISS,
+                        ATTACK_RESULTS.SUNK,
+                        ATTACK_RESULTS.SUNK_ALL,
+                    ]).toContain(result.result);
                 }
             });
         });
@@ -168,33 +181,27 @@ describe("Player Classes Tests", () => {
 
             beforeEach(() => {
                 computer = new ComputerPlayer("AI");
-                opponent = new RealPlayer("Human", 5); // Small board for easier testing
+                opponent = new RealPlayer("Human", MIN_BOARD_SIZE); // Small board for easier testing
             });
 
             test("doesn't attack the same cell twice", () => {
-                // Attack all 25 cells on a 5x5 board
-                for (let i = 0; i < 25; i++) {
+                const totalCells = MIN_BOARD_SIZE ** 2;
+
+                // Attack all cells on the board
+                for (let i = 0; i < totalCells; i++) {
                     const result = computer.attack(opponent.gameboard);
-                    expect(["hit", "miss", "sunk", "sunk-all"]).toContain(result.result);
+                    expect([
+                        ATTACK_RESULTS.HIT,
+                        ATTACK_RESULTS.MISS,
+                        ATTACK_RESULTS.SUNK,
+                        ATTACK_RESULTS.SUNK_ALL,
+                    ]).toContain(result.result);
                 }
 
-                // 26th attack should fail because all cells attacked
+                // Next attack should fail because all cells attacked
                 expect(() => computer.attack(opponent.gameboard)).toThrow();
             });
         });
-
-        /*    describe("attack() Method - AI Strategy", () => {
-            let computer, opponent;
-
-            beforeEach(() => {
-                computer = new ComputerPlayer("AI");
-                opponent = new RealPlayer("Human");
-                opponent.gameboard.placeShip(5, 5, 3, "E");
-            });
-
-            test("hunt and target correctly hunts for ships and then targets them until destruction", () => {});
-            test("smart targeting correctly plays in a smart way using probability")
-        }); */
 
         describe("Integration Tests", () => {
             test("computer can play a full game", () => {
@@ -202,22 +209,22 @@ describe("Player Classes Tests", () => {
                 const human = new RealPlayer("Player");
 
                 // Setup ships
-                human.gameboard.placeShip(0, 0, 2, "E");
-                human.gameboard.placeShip(0, 1, 2, "E");
-                computer.gameboard.placeShip(0, 0, 3, "E");
+                human.gameboard.placeShip(0, 0, 2, DIRECTIONS.EAST);
+                human.gameboard.placeShip(0, 1, 2, DIRECTIONS.EAST);
+                computer.gameboard.placeShip(0, 0, 3, DIRECTIONS.EAST);
 
                 // Computer attacks until all human ships sunk
                 let result;
                 let attackCount = 0;
                 const maxAttacks = 100; // Safety limit
 
-                while (result !== "sunk-all" && attackCount < maxAttacks) {
+                while (result !== ATTACK_RESULTS.SUNK_ALL && attackCount < maxAttacks) {
                     let attack = computer.attack(human.gameboard);
                     result = attack.result;
                     attackCount++;
                 }
 
-                expect(result).toBe("sunk-all");
+                expect(result).toBe(ATTACK_RESULTS.SUNK_ALL);
                 expect(attackCount).toBeLessThan(maxAttacks);
             });
         });
@@ -228,48 +235,48 @@ describe("Player Classes Tests", () => {
             const player1 = new RealPlayer("Alice");
             const player2 = new RealPlayer("Bob");
 
-            player1.gameboard.placeShip(0, 0, 2, "E");
-            player2.gameboard.placeShip(5, 5, 2, "E");
+            player1.gameboard.placeShip(0, 0, 2, DIRECTIONS.EAST);
+            player2.gameboard.placeShip(5, 5, 2, DIRECTIONS.EAST);
 
             // Player 1 attacks Player 2
             const result1 = player1.attack(player2.gameboard, 5, 5);
-            expect(result1.result).toBe("hit");
+            expect(result1.result).toBe(ATTACK_RESULTS.HIT);
 
             // Player 2 attacks Player 1
             const result2 = player2.attack(player1.gameboard, 0, 0);
-            expect(result2.result).toBe("hit");
+            expect(result2.result).toBe(ATTACK_RESULTS.HIT);
         });
 
         test("human vs computer gameplay", () => {
             const human = new RealPlayer("Alice");
             const computer = new ComputerPlayer("AI");
 
-            human.gameboard.placeShip(0, 0, 3, "E");
-            computer.gameboard.placeShip(5, 5, 3, "E");
+            human.gameboard.placeShip(0, 0, 3, DIRECTIONS.EAST);
+            computer.gameboard.placeShip(5, 5, 3, DIRECTIONS.EAST);
 
             // Human attacks computer
             const humanAttack = human.attack(computer.gameboard, 5, 5);
-            expect(["hit", "miss"]).toContain(humanAttack.result);
+            expect([ATTACK_RESULTS.HIT, ATTACK_RESULTS.MISS]).toContain(humanAttack.result);
 
             // Computer attacks human
             const computerAttack = computer.attack(human.gameboard);
-            expect(["hit", "miss"]).toContain(computerAttack.result);
+            expect([ATTACK_RESULTS.HIT, ATTACK_RESULTS.MISS]).toContain(computerAttack.result);
         });
 
         test("computer vs computer gameplay", () => {
             const computerOne = new ComputerPlayer("AI 1");
             const computerTwo = new ComputerPlayer("AI 2");
 
-            computerOne.gameboard.placeShip(0, 0, 3, "E");
-            computerTwo.gameboard.placeShip(5, 5, 3, "E");
+            computerOne.gameboard.placeShip(0, 0, 3, DIRECTIONS.EAST);
+            computerTwo.gameboard.placeShip(5, 5, 3, DIRECTIONS.EAST);
 
             // 1 attacks 2
             const oneAttack = computerOne.attack(computerTwo.gameboard);
-            expect(["hit", "miss"]).toContain(oneAttack.result);
+            expect([ATTACK_RESULTS.HIT, ATTACK_RESULTS.MISS]).toContain(oneAttack.result);
 
             // 2 attacks 1
             const twoAttack = computerTwo.attack(computerOne.gameboard);
-            expect(["hit", "miss"]).toContain(twoAttack.result);
+            expect([ATTACK_RESULTS.HIT, ATTACK_RESULTS.MISS]).toContain(twoAttack.result);
         });
     });
 });

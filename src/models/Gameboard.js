@@ -1,4 +1,12 @@
 import Ship from "./Ship.js";
+import {
+    MIN_BOARD_SIZE,
+    MAX_BOARD_SIZE,
+    DEFAULT_BOARD_SIZE,
+    VALID_DIRECTIONS,
+    ATTACK_RESULTS,
+    CELL_STATES,
+} from "./Constants.js";
 
 /**
  * Represents a Battleship game board
@@ -29,10 +37,6 @@ import Ship from "./Ship.js";
  * ```
  */
 export default class Gameboard {
-    // Private constants
-    #MIN_GRID_SIZE = 5;
-    #MAX_GRID_SIZE = 10;
-
     // Private instance fields
     #size;
     #board;
@@ -40,34 +44,42 @@ export default class Gameboard {
 
     /**
      * Creates a new game board
-     * @param {number} [size=10] - Board size (5-10 inclusive)
+     * @param {number} [size=DEFAULT_BOARD_SIZE] - Board size (MIN_BOARD_SIZE-MAX_BOARD_SIZE inclusive)
      * @throws {TypeError} If size is not an integer
      * @throws {RangeError} If size is outside valid range
      */
-    constructor(size = 10) {
+    constructor(size = DEFAULT_BOARD_SIZE) {
         // Validate type
         if (!Number.isInteger(size)) {
             throw new TypeError("Size must be an integer");
         }
 
         // Validate range
-        if (size < this.#MIN_GRID_SIZE || size > this.#MAX_GRID_SIZE) {
+        if (size < MIN_BOARD_SIZE || size > MAX_BOARD_SIZE) {
             throw new RangeError(
-                `Gameboard must have grid size between ${this.#MIN_GRID_SIZE} and ${this.#MAX_GRID_SIZE} inclusive`
+                `Gameboard must have grid size between ${MIN_BOARD_SIZE} and ${MAX_BOARD_SIZE} inclusive`
             );
         }
 
         this.#size = size;
-        this.#board = Array.from({ length: size }, () => Array(size).fill(null));
+        this.#board = Array.from({ length: size }, () => Array(size).fill(CELL_STATES.EMPTY));
         this.#ships = [];
     }
 
     /**
      * Gets the board size
-     * @returns {number} The size of the board (5-10)
+     * @returns {number} The size of the board (MIN_BOARD_SIZE-MAX_BOARD_SIZE)
      */
     get size() {
         return this.#size;
+    }
+
+    /**
+     * Gets the board 2D array
+     * @returns {Array<Array>} A 2D array representing the board state
+     */
+    get board() {
+        return this.#board;
     }
 
     /**
@@ -102,8 +114,8 @@ export default class Gameboard {
             throw new TypeError("Coordinates must be integers");
         }
 
-        if (!Object.keys(deltas).includes(direction)) {
-            throw new TypeError("Direction must be 'N', 'E', 'S', or 'W'");
+        if (!VALID_DIRECTIONS.includes(direction)) {
+            throw new TypeError(`Direction must be one of: ${VALID_DIRECTIONS.join(", ")}`);
         }
 
         const delta = deltas[direction];
@@ -155,7 +167,7 @@ export default class Gameboard {
                 };
             }
 
-            if (this.#board[yCoord][xCoord] !== null) {
+            if (this.#board[yCoord][xCoord] !== CELL_STATES.EMPTY) {
                 return {
                     valid: false,
                     reason: "cell-occupied",
@@ -212,22 +224,22 @@ export default class Gameboard {
         const cell = this.#board[y][x];
 
         // Check if already attacked
-        if (cell === "hit" || cell === "miss") {
+        if (cell === CELL_STATES.HIT || cell === CELL_STATES.MISS) {
             throw new Error(`Cell at (${x}, ${y}) has already been attacked`);
         }
 
         if (cell instanceof Ship) {
             cell.hit();
-            this.#board[y][x] = "hit";
+            this.#board[y][x] = CELL_STATES.HIT;
 
-            if (this.#allSunk()) return "sunk-all";
-            if (cell.isSunk()) return "sunk";
-            return "hit";
+            if (this.#allSunk()) return ATTACK_RESULTS.SUNK_ALL;
+            if (cell.isSunk()) return ATTACK_RESULTS.SUNK;
+            return ATTACK_RESULTS.HIT;
         }
 
         // Must be null (empty water)
-        this.#board[y][x] = "miss";
-        return "miss";
+        this.#board[y][x] = CELL_STATES.MISS;
+        return ATTACK_RESULTS.MISS;
     }
 
     /**
@@ -251,9 +263,9 @@ export default class Gameboard {
             .map((row) =>
                 row
                     .map((cell) => {
-                        if (cell === null) return "~";
-                        if (cell === "miss") return "O";
-                        if (cell === "hit") return "X";
+                        if (cell === CELL_STATES.EMPTY) return "~";
+                        if (cell === CELL_STATES.MISS) return "O";
+                        if (cell === CELL_STATES.HIT) return "X";
                         if (cell instanceof Ship) return "S";
                     })
                     .join(" ")

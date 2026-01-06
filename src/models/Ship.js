@@ -1,25 +1,25 @@
+import { MIN_SHIP_LENGTH, MAX_SHIP_LENGTH, DEFAULT_SHIP_LENGTH } from "./Constants.js";
+
 /**
  * Represents a ship in the Battleship game
  * @class
  */
 export default class Ship {
-    #MIN_LENGTH = 2;
-    #MAX_LENGTH = 5;
     #length;
     #timesHit;
 
     /**
      * Creates a new ship
-     * @param {number} [length=2] - The length of the ship (2-5 inclusive)
+     * @param {number} [length=DEFAULT_SHIP_LENGTH] - The length of the ship (MIN_SHIP_LENGTH-MAX_SHIP_LENGTH inclusive)
      * @throws {TypeError} If length is not an integer
      * @throws {RangeError} If length is outside the valid range
      */
-    constructor(length = 2) {
+    constructor(length = DEFAULT_SHIP_LENGTH) {
         if (!Number.isInteger(length)) {
             throw new TypeError("Length must be an integer");
         }
-        if (length < this.#MIN_LENGTH || length > this.#MAX_LENGTH) {
-            throw new RangeError(`Ship must have length between ${this.#MIN_LENGTH} and ${this.#MAX_LENGTH} inclusive`);
+        if (length < MIN_SHIP_LENGTH || length > MAX_SHIP_LENGTH) {
+            throw new RangeError(`Ship must have length between ${MIN_SHIP_LENGTH} and ${MAX_SHIP_LENGTH} inclusive`);
         }
         this.#length = length;
         this.#timesHit = 0;
@@ -27,7 +27,7 @@ export default class Ship {
 
     /**
      * Gets the length of the ship
-     * @returns {number} The ship's length (2-5)
+     * @returns {number} The ship's length (MIN_SHIP_LENGTH-MAX_SHIP_LENGTH)
      */
     get length() {
         return this.#length;
