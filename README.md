@@ -1,253 +1,315 @@
-# 🧩 Odin Project Webpack Template
+# Odin Battleship
 
-A ready-to-use boilerplate for your future **The Odin Project** projects, built with **Webpack + npm**, and optional support for **Babel**, **ESLint + Prettier**, and **CSS optimisation**.
+A fully dynamic, interactive Battleship game built as part of **The Odin Project** curriculum.  
+This project emphasizes **Test-Driven Development (TDD)**, **modular architecture**, **AI opponent logic**, and **clean separation of concerns** between game logic and presentation.
+
+The game is built from the ground up using **vanilla JavaScript** with comprehensive **Jest test coverage**, demonstrating solid software engineering practices including unit testing, integration testing, and the usage of OOP principles.
 
 ---
 
-## 🚀 Getting Started
+## 🧩 Project Description
 
-Follow these steps after cloning the template repository to get up and running:
+This Battleship implementation allows users to:
+
+- Play against an intelligent computer opponent
+- Place ships on a customizable grid (5×5 to 10×10)
+- Attack opponent's board with real-time feedback
+- Track hits, misses, and sunken ships
+- Enjoy smooth turn-based gameplay with visual feedback
+- Experience a fully tested codebase with 95%+ test coverage
+- Start new games at any time with proper cleanup
+
+The codebase follows **MVC principles** with Models handling game logic, Views managing the DOM, and Controllers coordinating between them.
+
+---
+
+## 🚀 Features
+
+### 🛠 Modern Development Practices
+
+- **Test-Driven Development** with comprehensive Jest test suites
+- **Webpack bundling** for JavaScript, CSS, and assets
+- Full **ES6+ module syntax** with private class fields
+- **Shared constants** for maintainable configuration
+- Clean separation of concerns across architectural layers
+- Proper async handling and game state management
+
+### 🎮 Gameplay Features
+
+- **Smart AI opponent** with random and hunt-and-target attack strategies (extensible for future AI strategies)
+- **Configurable board sizes** (5×5 to 10×10) with balanced ship configurations
+- **Real-time attack feedback** (hit, miss, sunk, game over)
+- **Visual state indicators** for ship placement and attacks
+- **Turn-based gameplay** with message notifications
+- **No duplicate attacks** - intelligent attack history tracking
+- **Graceful game resets** with proper cleanup of pending operations
+
+### 🧪 Testing & Quality
+
+- Comprehensive unit tests for all game models
+- Integration tests for player interactions
+- Edge case coverage (boundary conditions, invalid inputs)
+- Test-driven bug fixes with regression prevention
+- Validated ship placement logic and attack mechanics
+
+---
+
+## 🧠 Application Architecture (MVC)
+
+### **Model Layer**
+
+- `Ship.js` - Individual ship with hit tracking and sunk status
+- `Gameboard.js` - Grid management, ship placement, attack handling
+- `Player.js` - Base player class with `RealPlayer` and `ComputerPlayer` subclasses
+- `Constants.js` - Centralized configuration (board sizes, ship lengths, directions)
+
+**Responsibilities:**
+
+- Game state management
+- Rule enforcement and validation
+- Attack logic and win condition detection
+- AI strategy implementation
+
+### **View Layer**
+
+- `GameView.js` - Renders game boards, ships, and attack results
+- `DialogView.js` - Handles new game dialog opening, submission, and closing
+- DOM manipulation and event binding only - **no game logic**
+
+**Responsibilities:**
+
+- Rendering game state to the DOM
+- Handling user interactions and forwarding to controller
+- Visual feedback (messages, state changes)
+
+### **Controller Layer**
+
+- `controller.js` - Orchestrates gameplay flow and turn management, handles game initialization
+
+**Responsibilities:**
+
+- Coordinating between models and views
+- Managing game lifecycle (start, turns, end, reset)
+- Handling async operations and timeouts
+- Preventing race conditions with game ID tracking
+
+### **Utilities**
+
+- `gameSetup.js` - Random ship placement with retry logic and board validation
+- Exported helper functions for ship placement algorithms
+- `UIUtils.js` - Helper functions for DOM manipulation
+
+---
+
+## 🎯 Core Algorithms
+
+### Random Ship Placement
+
+```javascript
+// Guarantees valid ship placement with configurable retry limits
+tryPlaceShip(board, length, maxAttempts);
+placeShipsRandom(boards, shipLengths);
+```
+
+- Validates board capacity before attempting placement
+- Uses retry logic with configurable max attempts (default: 1000)
+- Ensures no overlapping ships or out-of-bounds placement
+- Supports multiple boards for simultaneous setup
+
+### AI Attack Strategy
+
+Current implementation uses random attacks with duplicate prevention:
+
+- Tracks all previous attacks in a Set
+- Generates coordinates until an unattacked cell is found
+- Extensible architecture for future smart AI strategies
+
+A hunt-and-target mode is also available when creating a new game:
+
+- Hunt mode: Semi-random attacks until a hit is found
+- Target mode: Attack adjacent cells around known hits
+
+**Planned AI improvements:**
+
+- Improve the targeting mode to work out the direction of a ship and only follow this direction until the ship is sunk
+- Smart mode: Probability-based targeting considering remaining ship sizes
+
+---
+
+## 📁 Folder Structure
+
+```
+src/
+├── __tests__/
+│   ├── gameboard.test.js
+│   ├── gameSetup.test.js
+│   ├── player.test.js
+│   └── ship.test.js
+│
+├── models/
+│   ├── Constants.js
+│   ├── Gameboard.js
+│   ├── Player.js
+│   └── Ship.js
+│
+├── styles/
+│   ├── base.css
+│   ├── components.css
+│   ├── layout.css
+│   ├── tokens.css
+│   └── utilities.css
+│
+├── utils/
+│   ├── gameSetup.js
+│   └── UIUtils.js
+│
+├── views/
+│   ├── DialogView.js
+│   └── GameView.js
+│
+├── controller.js
+├── index.html
+└── index.js
+```
+
+---
+
+## 🧪 Test Coverage
+
+Comprehensive Jest test suites covering:
+
+**Ship Tests:**
+
+- Constructor validation (length ranges, type checking)
+- Hit tracking and sunk detection
+- Edge cases (over-hitting, boundary conditions)
+
+**Gameboard Tests:**
+
+- Board creation and sizing
+- Ship placement in all directions
+- Overlap and boundary validation
+- Attack mechanics (hit, miss, sunk, sunk-all)
+- Duplicate attack prevention
+
+**Player Tests:**
+
+- RealPlayer manual coordinate attacks
+- ComputerPlayer automatic attack generation
+- Attack history tracking
+- Full game simulation (play until victory)
+
+**Game Setup Tests:**
+
+- Random direction generation
+- Ship placement with retry logic
+- Board capacity validation
+- Multi-board setup
+- Edge cases (full boards, impossible placements)
+
+---
+
+## 🎯 Learning Objectives
+
+This project was built to develop practical experience with:
+
+- **Test-Driven Development** - Writing tests before implementation
+- **Object-Oriented Programming** - Classes, inheritance, encapsulation, private fields
+- **Factory Pattern** - Creating game objects with flexible configurations
+- **MVC Architecture** - Separating concerns across models, views, and controllers
+- **ES6+ Features** - Modules, async/await, Set/Map, destructuring, private fields (`#`)
+- **Game AI** - Implementing computer opponents with strategic decision-making
+- **Webpack Configuration** - Building modern JavaScript applications
+- **Async Programming** - Managing timeouts, delays, and preventing race conditions
+- **State Management** - Tracking game state and preventing invalid transitions
+- **Error Handling** - Graceful failure with descriptive error messages
+
+This is my **first time building a game with comprehensive test coverage and proper architecture**, significantly improving my ability to write maintainable, testable code.
+
+---
+
+## 🌐 Live Demo
+
+[Odin Battleship Live Demo](https://jameslafontaine.github.io/odin-battleship/)
+
+---
+
+## 🔮 Future Improvements
+
+### Gameplay Enhancements
+
+- **Sound effects** for attacks, hits, and ship destruction
+- **Game event log** showing full attack history
+- **Grid coordinates** (A-J, 1-10) for easier reference
+- **Improved AI strategies**:
+    - Smart mode (probability-based targeting)
+    - Multiple difficulty levels
+
+### UI/UX Improvements
+
+- **Drag-and-drop ship placement** for more intuitive setup
+- **Higher quality graphics and animations**
+    - Water effects and explosions
+    - Ship sinking animations
+    - Victory/defeat screens
+- **Optimized rendering** - cache and update only changed cells instead of full re-render
+- **Responsive design** for mobile and tablet gameplay
+- **Keyboard navigation** for accessibility
+
+### Multiplayer & Social
+
+- **Two-player local mode** (hot-seat multiplayer):
+    - "Pass device" screen to hide boards between turns
+    - Turn timers to prevent peeking
+- **Online multiplayer** with WebSockets or Firebase
+- **Replay system** to review past games
+- **Statistics tracking** (win/loss ratio, average turns to win)
+
+### Advanced Features
+
+- **Custom ship configurations** - let players choose ship sizes
+- **Multiple game modes**:
+    - Salvo mode (multiple shots per turn)
+    - Mines and special weapons
+    - Fog of war with partial visibility
+- **Save/load games** with localStorage persistence
+- **Spectator mode** for watching AI vs AI battles
+- **Tournament bracket system** for multiple games
+
+---
+
+## 🛠 Installation & Development
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/yourusername/odin-template.git my-project
-cd my-project
+# Clone the repository
+git clone https://github.com/yourusername/odin-battleship.git
 
-# 2. Install dependencies
+# Install dependencies
 npm install
 
-# 3. Optional: Run the setup script
-./setup_template_repo.sh
-
-# 4. Start the development server
+# Run development server
 npm run dev
 
-# 5. Build for production
+# Run tests
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Build for production
 npm run build
-
-# 6. Optional: Deploy to GitHub Pages
-npm run deploy
-```
-
-### ✅ Notes
-
--   **Step 3** (setup script) may prompt you to enable optional features like Babel or ESLint/Prettier.
--   **Step 4** launches the Webpack Dev Server with hot reloading for development.
--   **Step 5** creates a minified production build in the `dist/` folder.
--   **Step 6** deploys `dist/` to a `gh-pages` branch via `git subtree` (if configured).
-
-For a minimal workflow, the **only required commands** are:
-
-```bash
-npm install
-npm run dev       # or `npm run build` if just building for production
 ```
 
 ---
 
-### ⚠️ Note on `package.json` module type
+## 📜 License
 
-If you’re **not using Babel**, make sure your `package.json` **does not include** this line:
-
-```json
-"type": "commonjs"
-```
-
-Having it set forces Node to interpret `.js` files as CommonJS, which **breaks ES6 `import` / `export` syntax** used in this template.  
-Simply remove that line (or set `"type": "module"` if you prefer ESM explicitly).
+This project is for educational purposes and follows **The Odin Project** curriculum guidelines.  
+Feel free to fork, modify, and explore.
 
 ---
 
-### 📝 Babel vs No-Babel Workflow Tip
+## 🙏 Acknowledgments
 
--   **Using Babel (recommended for beginners or projects with modern JS features):**
-
-    -   Keep `"type"` unset or `"type": "module"` in `package.json`.
-    -   Babel will transpile your ES6+ syntax (`import`/`export`) into a form Webpack and Node can handle.
-    -   Use Babel loader in `webpack.common.js`.
-
--   **Not using Babel (simple template setup):**
-    -   Remove `"type": "commonjs"` from `package.json`.
-    -   Webpack will handle ES modules directly for `import`/`export` syntax.
-    -   You won’t need any Babel-related packages or config.
-
-This ensures users know exactly when they need Babel and when it’s safe to skip it.
-
----
-
-## 🧱 Included by Default
-
--   **Webpack 5 modular configuration**
-
-    -   `webpack.common.js` – shared configuration
-    -   `webpack.dev.js` – development-specific config
-    -   `webpack.prod.js` – production build config
-
--   **Basic project structure**
-
-    -   `src/index.html` – main HTML template
-    -   `src/index.js` – Webpack entry, imports styles.js and app.js
-    -   `src/controller.js` – app orchestrator
-    -   `src/models/` – core logic
-    -   `src/views/` – view-specific modules
-    -   `src/utils/` – generic utility functions
-    -   `src/styles/` – CSS subfiles
-    -   `src/services/` - External operations (API calls, storage, etc.)
-    -   `dist/` – build output
-
--   **NPM scripts**
-
-    -   `npm run dev` → start dev server
-    -   `npm run build` → production build
-    -   `npm run deploy` → deploy `dist/` to GitHub Pages (`git subtree`)
-    -   `npm run lint` → check for ESLint + Prettier issues
-    -   `npm run lint:fix` → auto-fix all issues, including Prettier formatting
-    -   `npm run format` → format using Prettier alone
-
--   **Optional Bash script setup prompts**
-
-    -   Babel for ES6+ transpilation
-    -   ESLint + Prettier for code style consistency
-
----
-
-## 🧠 Webpack Behaviour: JS vs CSS Minification
-
-Webpack automatically minifies JavaScript when using **`mode: 'production'`**, powered internally by **Terser**.  
-You do **not need to install `terser-webpack-plugin`** unless you want to customize minification options.
-
-CSS is **not minified by default**. If you want smaller CSS output, you can use a plugin like `css-minimizer-webpack-plugin`.
-
-### ✅ Recommended Setup
-
--   **Default (simple projects):**
-
-    -   Just use `mode: 'production'`.
-    -   Webpack handles JS minification automatically.
-    -   CSS is optional.
-
--   **Advanced / customizable minification:**
-    -   Add `TerserPlugin` to the `optimization.minimizer` array if you want fine-grained control (e.g., keeping comments, custom ECMAScript target, parallelization).
-
----
-
-## ⚙️ Customisation Tips
-
--   **SASS/SCSS:**
-
-    ```bash
-    npm install sass sass-loader --save-dev
-    ```
-
-    Then update your `webpack.common.js`:
-
-    ```js
-    {
-      test: /\.s[ac]ss$/i,
-      use: ['style-loader', 'css-loader', 'sass-loader'],
-    }
-    ```
-
--   **Linting & Formatting:**
-
-    ```bash
-    npm run lint
-    ```
-
--   **Deploy to GitHub Pages:**
-    ```bash
-    npm run deploy
-    ```
-
----
-
-## 🎨 CSS Workflow with Webpack
-
-Use `index.js` to import all CSS subfiles:
-
-```js
-// src/index.js
-import "./styles/tokens.css";
-import "./styles/base.css";
-import "./styles/layout.css";
-import "./styles/components.css";
-import "./styles/utilities.css";
-```
-
-✅ Clear, explicit, Webpack-compatible, and scalable.
-
----
-
-## 🧩 Folder Structure (with explanations)
-
-```plaintext
-📁 my-project/
- ┣ 📁 src/
- ┃ ┣ 📁 assets/                  ← Static assets
- ┃ ┃ ┣ 📁 fonts/                 ← Font files
- ┃ ┃ ┗ 📁 img/                   ← Images
- ┃ ┣ 📁 models/                  ← Core logic / data
- ┃ ┃ ┣ Constants.js              ← Enum-like constants
- ┃ ┃ ┣ Items.js                  ← Generic data object contained within a Model
- ┃ ┃ ┣ Manager.js                ← Singleton managing models
- ┃ ┃ ┗ Model.js                  ← Generic data object
- ┃ ┣ 📁 views/                   ← View-specific modules
- ┃ ┃ ┣ DialogView.js             ← Generic dialog rendering
- ┃ ┃ ┣ MainView.js               ← Generic main view rendering
- ┃ ┃ ┗ SidebarView.js            ← Generic sidebar rendering
- ┃ ┣ 📁 utils/                   ← Generic helpers / utilities
- ┃ ┃ ┣ DateUtils.js              ← Centralized date and time utility functions.
- ┃ ┃ ┣ TableUtils.js             ← Table helpers
- ┃ ┃ ┗ UIUtils.js                ← DOM helpers: show/hide/toggle/bindEvent/createElement etc.
- ┃ ┣ 📁 services/                ← External operations (API calls, storage, etc.)
- ┃ ┃ ┗ weatherService.js         ← Fetches and processes weather data using the Visual Crossing API
- ┃ ┣ 📁 styles/                  ← CSS subfiles
- ┃ ┃ ┣ base.css                  ← Base/global styles
- ┃ ┃ ┣ carousel.css              ← Carousel styling
- ┃ ┃ ┣ components.css            ← Component-specific styles
- ┃ ┃ ┣ dropdown.css              ← Dropdown styling
- ┃ ┃ ┣ layout.css                ← Layout rules (grid, flex, containers)
- ┃ ┃ ┣ tokens.css                ← Design tokens: colors, spacing, fonts
- ┃ ┃ ┗ utilities.css             ← Utility/helper classes (e.g., `.hidden`, `.mt-4`)
- ┃ ┣ controller.js               ← Orchestrates core logic + UI
- ┃ ┣ index.html                  ← HTML template
- ┃ ┗ index.js                    ← Webpack entry point, aggregates CSS subfiles
- ┃
- ┣ 📁 dist/                      ← Production build output
- ┣ .gitignore
- ┣ LICENSE
- ┣ package-lock.json
- ┣ package.json
- ┣ README.md
- ┣ setup_template_repo.sh
- ┣ webpack.common.js
- ┣ webpack.dev.js
- ┗ webpack.prod.js
-```
-
----
-
-## 🔧 (Optional) Improvements later
-
--   Use `.env` + `dotenv-webpack` for environment variables
--   Add testing support (e.g., Jest)
-
----
-
-## 🧰 Why Use This Template?
-
--   Saves time setting up Webpack projects for each Odin Project assignment.
--   Keeps configuration clean, modular, and reusable.
--   Promotes modern web dev best practices (linting, transpiling, bundling).
--   Fully extensible — add React, TypeScript, or other tools later if desired.
-
----
-
-## 📝 License
-
-This project is open-source under the **MIT License**.  
-Feel free to copy, modify, or use it for your Odin Project work or any other web dev projects.
-
----
-
-Happy coding! 💻✨
+Built as part of [The Odin Project](https://www.theodinproject.com/) curriculum.  
+Special thanks to the TOP community for guidance and support.
