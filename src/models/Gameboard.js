@@ -256,6 +256,14 @@ export default class Gameboard {
     }
 
     /**
+     * Returns the number of ships remaining on the board
+     * @returns {number} The number of ships remaining
+     */
+    getRemainingShips() {
+        return this.#ships.filter((ship) => !ship.isSunk());
+    }
+
+    /**
      * Helper function for visualising board
      */
     displayBoard() {

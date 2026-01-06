@@ -43,6 +43,7 @@ export class DialogView {
         this.dialogElement = dialogElement;
 
         // Buttons are expected, but are still optional for flexibility
+        this.form = dialogElement.querySelector("form");
         this.submitButton = dialogElement.querySelector(".submit-button");
         this.cancelButton = dialogElement.querySelector(".cancel-button");
 
@@ -90,8 +91,8 @@ export class DialogView {
      * Bind internal UI event handlers.
      */
     _setupEventListeners() {
-        if (this.submitButton) {
-            this.submitButton.addEventListener("click", () => {
+        if (this.form) {
+            this.form.addEventListener("submit", () => {
                 const formData = this._collectFormData();
                 // Merge form data with context
                 this._onSubmit?.({ ...this._context, ...formData });
@@ -113,15 +114,12 @@ export class DialogView {
      * @returns {Object} A key-value map of form data.
      */
     _collectFormData() {
-        const elements = this.dialogElement.querySelectorAll("input, textarea, select");
-
+        if (!this.form) return {};
+        const formData = new FormData(this.form);
         const payload = {};
-        elements.forEach((el) => {
-            if (el.name) {
-                payload[el.name] = el.value;
-            }
-        });
-
+        for (const [key, value] of formData.entries()) {
+            payload[key] = value;
+        }
         return payload;
     }
 

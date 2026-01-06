@@ -16,7 +16,7 @@
     box-sizing: border-box;
 
     /* Debug */
-    outline: 2px solid red;
+    /* outline: 2px solid red; */
 }
 
 html,
@@ -151,7 +151,6 @@ small {
 }
 
 /* #endregion */
-
 
 /* || More Resets */
 /* 

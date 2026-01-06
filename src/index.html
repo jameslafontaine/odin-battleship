@@ -1,91 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Battleship</title>
+        <link rel="icon" type="image/png" href="assets/img/favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="assets/img/favicon-16x16.png" sizes="16x16" />
+    </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Webpack Template</title>
-  <link rel="icon" type="image/png" href="assets/img/favicon-32x32.png" sizes="32x32">
-  <link rel="icon" type="image/png" href="assets/img/favicon-16x16.png" sizes="16x16">
-</head>
+    <body>
+        <dialog class="new-game-dialog">
+            <form method="dialog">
+                <label for="board-size-input">Board Size:</label>
+                <input type="range" name="board-size" id="board-size-input" min="5" max="10" value="5" />
 
-<body>
-  <!-- SVG SPRITE SHEET -->
-  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+                <fieldset id="player-one-inputs">
+                    <legend>Player 1</legend>
+                    <label for="player-name-1">Player Name:</label>
+                    <input type="text" name="player-name-1" id="player-name-1" required />
 
-    <!-- ============================= -->
-    <!--       APP LOGO (MAIN)         -->
-    <!-- ============================= -->
-    <symbol id="app-logo" viewBox="0 0 24 24">
-      <path
-        d="M23,12L20.56,9.22L20.9,5.54L17.29,4.72L15.4,1.54L12,3L8.6,1.54L6.71,4.72L3.1,5.53L3.44,9.21L1,12L3.44,14.78L3.1,18.47L6.71,19.29L8.6,22.47L12,21L15.4,22.46L17.29,19.28L20.9,18.46L20.56,14.78L23,12M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" />
-    </symbol>
+                    <fieldset>
+                        <legend>Player Type:</legend>
+                        <input type="radio" name="player-type-1" value="real" id="player-type-real-1" checked />
+                        <label for="player-type-real-1">Real</label>
 
-    <!-- ============================= -->
-    <!--        PROJECT ICON           -->
-    <!-- ============================= -->
-    <symbol id="icon-project" viewBox="0 0 24 24">
-      <path d="M10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6H12L10,4Z" />
-    </symbol>
+                        <input type="radio" name="player-type-1" value="comp" id="player-type-comp-1" />
+                        <label for="player-type-comp-1">Computer</label>
+                    </fieldset>
+                    <fieldset id="computer-inputs-2">
+                        <legend>Computer Strategy:</legend>
+                        <input type="radio" name="strategy-1" value="random" id="strategy-random-1" checked />
+                        <label for="strategy-random-1">Random</label>
 
-    <!-- ============================= -->
-    <!--         TODO ICONS             -->
-    <!-- ============================= -->
-    <symbol id="icon-todo" viewBox="0 0 24 24">
-      <path
-        d="M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
-    </symbol>
+                        <input type="radio" name="strategy-1" value="hunt" id="strategy-hunt-1" />
+                        <label for="strategy-hunt-1">Hunt and Target</label>
+                    </fieldset>
+                </fieldset>
 
-    <symbol id="icon-todo-checked" viewBox="0 0 24 24">
-      <path
-        d="M20,12A8,8 0 0,1 12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4C12.76,4 13.5,4.11 14.2,4.31L15.77,2.74C14.61,2.26 13.34,2 12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12M7.91,10.08L6.5,11.5L11,16L21,6L19.59,4.58L11,13.17L7.91,10.08Z" />
-    </symbol>
+                <fieldset id="player-two-inputs">
+                    <legend>Player 2</legend>
+                    <label for="player-name-2">Player Name:</label>
+                    <input
+                        type="text"
+                        name="player-name-2"
+                        id="player-name-2"
+                        placeholder="Computer"
+                        value="Computer"
+                        required
+                    />
 
-    <!-- ============================= -->
-    <!--         EDIT ICON             -->
-    <!-- ============================= -->
-    <symbol id="icon-edit" viewBox="0 0 24 24">
-      <path
-        d="M19.71,8.04L17.37,10.37L13.62,6.62L15.96,4.29C16.35,3.9 17,3.9 17.37,4.29L19.71,6.63C20.1,7 20.1,7.65 19.71,8.04M3,17.25L13.06,7.18L16.81,10.93L6.75,21H3V17.25M16.62,5.04L15.08,6.58L17.42,8.92L18.96,7.38L16.62,5.04M15.36,11L13,8.64L4,17.66V20H6.34L15.36,11Z" />
-    </symbol>
+                    <fieldset>
+                        <legend>Player Type:</legend>
+                        <input type="radio" name="player-type-2" value="real" id="player-type-real-2" />
+                        <label for="player-type-real-2">Real</label>
 
-    <!-- ============================= -->
-    <!--         DELETE ICON           -->
-    <!-- ============================= -->
-    <symbol id="icon-delete" viewBox="0 0 24 24">
-      <path
-        d="M18,19C18,20.66 16.66,22 15,22H8C6.34,22 5,20.66 5,19V7H4V4H8.5L9.5,3H13.5L14.5,4H19V7H18V19M6,7V19C6,20.1 6.9,21 8,21H15C16.1,21 17,20.1 17,19V7H6M18,6V5H14L13,4H10L9,5H5V6H18M8,9H9V19H8V9M14,9H15V19H14V9Z" />
-    </symbol>
+                        <input type="radio" name="player-type-2" value="comp" id="player-type-comp-2" checked />
+                        <label for="player-type-comp-2">Computer</label>
+                    </fieldset>
+                    <fieldset id="computer-inputs-2">
+                        <legend>Computer Strategy:</legend>
+                        <input type="radio" name="strategy-2" value="random" id="strategy-random-2" checked />
+                        <label for="strategy-random-2">Random</label>
 
-    <!-- ============================= -->
-    <!--         STAR ICONS             -->
-    <!-- ============================= -->
-    <symbol id="icon-star" viewBox="0 0 24 24">
-      <path
-        d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z" />
-    </symbol>
+                        <input type="radio" name="strategy-2" value="hunt" id="strategy-hunt-2" />
+                        <label for="strategy-hunt-2">Hunt and Target</label>
+                    </fieldset>
+                </fieldset>
+                <button class="submit-button">Start Game</button>
+            </form>
+            <button class="cancel-button">Cancel</button>
+        </dialog>
 
-    <symbol id="icon-star-filled" viewBox="0 0 24 24">
-      <path
-        d="M12.86,10.44L11,6.06L9.14,10.45L4.39,10.86L8,14L6.92,18.63L11,16.17L15.09,18.63L14,14L17.61,10.86L12.86,10.44M16.59,20.7L11,17.34L5.42,20.7L6.88,14.35L1.96,10.07L8.45,9.5L11,3.5L13.55,9.5L20.04,10.07L15.12,14.34L16.59,20.7Z"
-        fill="currentColor" />
-    </symbol>
+        <main class="game-container">
+            <div class="top-panel">
+                <div class="battleship-logo">
+                    <img src="./assets/img/boat.svg" width="120" />
+                    <h1>Battleship</h1>
+                </div>
+                <div class="message-container"></div>
+                <button class="new-game-button">Start New Game</button>
+            </div>
 
-    <!-- ============================= -->
-    <!--         EXPAND ICONS           -->
-    <!-- ============================= -->
-    <symbol id="icon-minimize" viewBox="0 0 24 24">
-      <path d="M20,14H4V10H20" />
-    </symbol>
+            <div class="grids-container" hidden>
+                <div class="player-grid"></div>
+                <div class="player-grid-label">Your grid</div>
+                <div class="ship-count-container"></div>
+                <div class="opponent-grid"></div>
+                <div class="opponent-grid-label">Opponent's grid</div>
+            </div>
 
-    <symbol id="icon-expand" viewBox="0 0 24 24">
-      <path
-        d="M10,21V19H6.41L10.91,14.5L9.5,13.09L5,17.59V14H3V21H10M14.5,10.91L19,6.41V10H21V3H14V5H17.59L13.09,9.5L14.5,10.91Z" />
-    </symbol>
-
-  </svg>
-
-  <div id="app">Hello World!</div>
-</body>
-
+            <div class="bottom-panel"></div>
+        </main>
+    </body>
 </html>

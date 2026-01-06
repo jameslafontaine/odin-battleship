@@ -3,7 +3,6 @@
  *
  * Responsibilities:
  *  - Initialize core application components.
- *  - Create and configure all view instances (SidebarView, MainView, DialogView).
  *  - Connect the data/model layer with view event handlers.
  *  - Trigger the render of UI components.
  *
@@ -11,7 +10,7 @@
  *  - initApp — Function that starts the application.
  *
  * Dependencies:
- *  - manager — The global state/data manager (model layer).
+ *  - Player — The global state/data managers (model layer).
  *  - SidebarView — Renders and manages a sidebar UI.
  *  - MainView — Renders and manages the main content UI.
  *  - DialogView — Handles modal dialog UI instances.
@@ -19,82 +18,89 @@
  * @module controller
  */
 
-import { manager } from "./models/Manager.js";
-import { SidebarView } from "./views/SidebarView.js";
-import { MainView } from "./views/MainView.js";
+import { GameView } from "./views/GameView.js";
 import { DialogView } from "./views/DialogView.js";
+import { placeShipsRandom, initialisePlayers } from "./utils/gameSetup.js";
 
 // ----------------------
+
+// Game state
+let playerOne;
+let playerTwo;
+let currentGameId = 0;
+let gameId;
+
+// ----------------------
+
 // View instances
-// ----------------------
-const sidebarView = new SidebarView(document.querySelector(".sidebar"));
-const mainView = new MainView(document.querySelector(".main-container"));
-
-// Example dialogs (generic)
-const createModelDialog = new DialogView(document.querySelector("#create-model-dialog"));
-const editModelDialog = new DialogView(document.querySelector("#edit-model-dialog"));
-const deleteModelDialog = new DialogView(document.querySelector("#delete-model-dialog"));
+const gameView = new GameView(document.querySelector(".game-container"));
+const newGameDialog = new DialogView(document.querySelector(".new-game-dialog"));
 
 // ----------------------
 // Helper to render the entire app state
 // ----------------------
-function renderAll() {
-    const activeModelId = manager?.activeModel?.id || null;
-    sidebarView.update(manager.getModels(), activeModelId);
-    mainView.update(manager?.activeModel);
+function renderAll(player, opponent) {
+    gameView.update(player, opponent);
 }
 
 // ----------------------
-// Assign all callbacks between views and the manager
+// Assign all callbacks between views and the game logic
 // ----------------------
 function assignCallbacks() {
-    // Sidebar events
-    sidebarView.setOnModelSelected((id) => {
-        manager.setActiveModelById(id);
-        renderAll();
+    // GameView events
+    gameView.setOnNewGameClicked(() => {
+        newGameDialog.open();
     });
 
-    sidebarView.setOnCreateModelClicked(() => {
-        createModelDialog.open();
-    });
-
-    // MainView events
-    mainView.setOnEditModelClicked((modelId) => {
-        const model = manager.getModelById(modelId);
-        editModelDialog.open({ id: model.id, ...model.getData() });
-    });
-
-    mainView.setOnDeleteModelClicked((modelId) => {
-        const model = manager.getModelById(modelId);
-        deleteModelDialog.open({ id: model.id, ...model.getData() });
-    });
-
-    mainView.setOnToggleModelState?.((modelId) => {
-        const model = manager.getModelById(modelId);
-        model.toggleState?.();
-        renderAll();
-        manager.saveToStorage();
+    gameView.setOnCellClicked(async (x, y) => {
+        await handlePlayerTurn(x, y, gameId);
     });
 
     // Dialog events
-    createModelDialog.setOnSubmit((data) => {
-        manager.createModel(data);
-        renderAll();
-        manager.saveToStorage();
-    });
+    newGameDialog.setOnSubmit(startNewGame);
+}
 
-    editModelDialog.setOnSubmit((data) => {
-        const model = manager.getModelById(data.id);
-        model.updateData?.(data);
-        renderAll();
-        manager.saveToStorage();
-    });
+function startNewGame(formData) {
+    currentGameId++;
+    gameId = currentGameId;
+    ({ playerOne, playerTwo } = initialisePlayers(formData));
 
-    deleteModelDialog.setOnSubmit((data) => {
-        manager.deleteModelById(data.id);
-        renderAll();
-        manager.saveToStorage();
-    });
+    placeShipsRandom([playerOne.gameboard, playerTwo.gameboard]);
+    renderAll(playerOne, playerTwo);
+    gameView.renderGameMessage(`It's ${playerOne.name}'s turn.`);
+    gameView.wakeGrids();
+}
+
+async function handlePlayerTurn(x, y, gameId) {
+    // Player one's turn (human)
+    const attackResult = playerOne.attack(playerTwo.gameboard, x, y);
+    renderAll(playerOne, playerTwo);
+    gameView.sleepGrids();
+
+    if (attackResult.result === "sunk-all") {
+        gameView.renderGameMessage(`${playerOne.name} wins!`);
+        gameView.disableGrids();
+        return;
+    } else {
+        // Computer's turn
+        gameView.renderGameMessage(`${playerOne.name} attacked - ${attackResult.result}.`);
+        await new Promise((r) => setTimeout(r, 2000));
+
+        if (gameId !== currentGameId) return;
+        const computerAttack = playerTwo.attack(playerOne.gameboard);
+        renderAll(playerOne, playerTwo);
+
+        gameView.renderGameMessage(`${playerTwo.name} attacked - ${computerAttack.result}.`);
+
+        if (computerAttack.result === "sunk-all") {
+            gameView.renderGameMessage(`${playerTwo.name} wins!`);
+            gameView.disableGrids();
+            return;
+        }
+        // await new Promise((r) => setTimeout(r, 2000));
+        // gameView.renderGameMessage(`It's ${playerOne.name}'s turn.`);
+        gameView.wakeGrids();
+    }
 }
 
 // ----------------------
@@ -102,6 +108,4 @@ function assignCallbacks() {
 // ----------------------
 export async function initApp() {
     assignCallbacks();
-    manager.loadFromStorage?.();
-    renderAll();
 }

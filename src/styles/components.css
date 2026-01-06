@@ -8,8 +8,95 @@
 /* #region */
 
 /* Component-level media queries live here if the component needs to adapt at different screen sizes: */
-.card {
-    padding: var(--spacing-md);
+.player-square,
+.opponent-square {
+    border: 1px solid rgb(128, 128, 128);
+    display: flex;
+}
+
+.opponent-square {
+    cursor: pointer;
+}
+
+.battleship-logo {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 1.5rem;
+}
+
+.battleship-logo h1 {
+    margin-bottom: 0.5rem;
+}
+
+.message-container {
+    background-color: rgb(3, 3, 28);
+    padding: 1rem;
+    border-radius: 15px;
+    font-weight: bold;
+    min-width: 25%;
+    min-height: 3.5rem;
+    text-align: center;
+}
+
+.new-game-button {
+    border-radius: 5px;
+}
+
+.ship {
+    background-color: gray;
+}
+
+.hit {
+    background-color: red;
+    border-radius: 50%;
+    width: 50%;
+    height: 50%;
+    margin: auto;
+}
+
+.miss {
+    background-color: white;
+    border-radius: 50%;
+    width: 50%;
+    height: 50%;
+    margin: auto;
+}
+
+.clicked {
+    pointer-events: none;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.sleeping {
+    pointer-events: none;
+}
+
+.ship-count-container {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.ship-indicator {
+    min-height: 1.5rem;
+    min-width: 5rem;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid white;
+    border-radius: 5px;
+    display: inline-block;
+    margin: 0.2rem 0;
+}
+
+.ship-alive {
+    background-color: lightgreen;
+}
+
+.ship-sunk {
+    background-color: red;
 }
 
 @media (max-width: 500px) {
