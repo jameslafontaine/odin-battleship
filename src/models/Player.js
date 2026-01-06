@@ -50,12 +50,13 @@ export class RealPlayer extends Player {
      * @param {Gameboard} opponentBoard
      * @param {number} x - X coordinate from UI
      * @param {number} y - Y coordinate from UI
+     * @returns {{result: string, x: number, y: number}}
      */
     attack(opponentBoard, x, y) {
         if (x === undefined || y === undefined) {
             throw new Error("Human player must provide attack coordinates");
         }
-        return opponentBoard.receiveAttack(x, y);
+        return { result: opponentBoard.receiveAttack(x, y), x, y };
     }
 }
 
@@ -75,6 +76,7 @@ export class ComputerPlayer extends Player {
     /**
      * Computer generates and executes attack automatically
      * @param {Gameboard} opponentBoard
+     * @returns {{result: string, x: number, y: number}}
      */
     attack(opponentBoard) {
         // Check if all cells have been attacked first
@@ -84,7 +86,7 @@ export class ComputerPlayer extends Player {
         }
         const [x, y] = this.#generateAttackCoordinates(opponentBoard);
         this.#attackHistory.add(`${x},${y}`);
-        return opponentBoard.receiveAttack(x, y);
+        return { result: opponentBoard.receiveAttack(x, y), x, y };
     }
 
     /**

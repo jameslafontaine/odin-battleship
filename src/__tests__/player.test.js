@@ -66,18 +66,18 @@ describe("Player Classes Tests", () => {
 
             test("successfully attacks with valid coordinates", () => {
                 const result = player1.attack(player2.gameboard, 0, 0);
-                expect(result).toBe("hit");
+                expect(result.result).toBe("hit");
             });
 
             test("returns 'miss' for empty water", () => {
                 const result = player1.attack(player2.gameboard, 5, 5);
-                expect(result).toBe("miss");
+                expect(result.result).toBe("miss");
             });
 
             test("returns 'sunk' when ship is destroyed", () => {
                 player1.attack(player2.gameboard, 0, 0); // Hit ship 1
                 const result = player1.attack(player2.gameboard, 1, 0); // Sink ship 1
-                expect(result).toBe("sunk");
+                expect(result.result).toBe("sunk");
             });
 
             test("returns 'sunk-all' when all ships destroyed", () => {
@@ -89,7 +89,7 @@ describe("Player Classes Tests", () => {
                 player1.attack(player2.gameboard, 0, 1);
                 const result = player1.attack(player2.gameboard, 1, 1);
 
-                expect(result).toBe("sunk-all");
+                expect(result.result).toBe("sunk-all");
             });
 
             test("throws error when coordinates not provided", () => {
@@ -150,7 +150,7 @@ describe("Player Classes Tests", () => {
 
             test("generates attack automatically without coordinates", () => {
                 const result = computer.attack(opponent.gameboard);
-                expect(["hit", "miss"]).toContain(result);
+                expect(["hit", "miss"]).toContain(result.result);
             });
 
             test("generates coordinates within board bounds", () => {
@@ -158,7 +158,7 @@ describe("Player Classes Tests", () => {
                 for (let i = 0; i < 20; i++) {
                     const result = computer.attack(opponent.gameboard);
                     // If we get here without throwing, coordinates were valid
-                    expect(["hit", "miss", "sunk", "sunk-all"]).toContain(result);
+                    expect(["hit", "miss", "sunk", "sunk-all"]).toContain(result.result);
                 }
             });
         });
@@ -175,7 +175,7 @@ describe("Player Classes Tests", () => {
                 // Attack all 25 cells on a 5x5 board
                 for (let i = 0; i < 25; i++) {
                     const result = computer.attack(opponent.gameboard);
-                    expect(["hit", "miss", "sunk", "sunk-all"]).toContain(result);
+                    expect(["hit", "miss", "sunk", "sunk-all"]).toContain(result.result);
                 }
 
                 // 26th attack should fail because all cells attacked
@@ -193,7 +193,7 @@ describe("Player Classes Tests", () => {
             });
 
             test("hunt and target correctly hunts for ships and then targets them until destruction", () => {});
-            test("")
+            test("smart targeting correctly plays in a smart way using probability")
         }); */
 
         describe("Integration Tests", () => {
@@ -212,7 +212,8 @@ describe("Player Classes Tests", () => {
                 const maxAttacks = 100; // Safety limit
 
                 while (result !== "sunk-all" && attackCount < maxAttacks) {
-                    result = computer.attack(human.gameboard);
+                    let attack = computer.attack(human.gameboard);
+                    result = attack.result;
                     attackCount++;
                 }
 
@@ -232,11 +233,11 @@ describe("Player Classes Tests", () => {
 
             // Player 1 attacks Player 2
             const result1 = player1.attack(player2.gameboard, 5, 5);
-            expect(result1).toBe("hit");
+            expect(result1.result).toBe("hit");
 
             // Player 2 attacks Player 1
             const result2 = player2.attack(player1.gameboard, 0, 0);
-            expect(result2).toBe("hit");
+            expect(result2.result).toBe("hit");
         });
 
         test("human vs computer gameplay", () => {
@@ -248,11 +249,11 @@ describe("Player Classes Tests", () => {
 
             // Human attacks computer
             const humanAttack = human.attack(computer.gameboard, 5, 5);
-            expect(["hit", "miss"]).toContain(humanAttack);
+            expect(["hit", "miss"]).toContain(humanAttack.result);
 
             // Computer attacks human
             const computerAttack = computer.attack(human.gameboard);
-            expect(["hit", "miss"]).toContain(computerAttack);
+            expect(["hit", "miss"]).toContain(computerAttack.result);
         });
 
         test("computer vs computer gameplay", () => {
@@ -264,11 +265,11 @@ describe("Player Classes Tests", () => {
 
             // 1 attacks 2
             const oneAttack = computerOne.attack(computerTwo.gameboard);
-            expect(["hit", "miss"]).toContain(oneAttack);
+            expect(["hit", "miss"]).toContain(oneAttack.result);
 
             // 2 attacks 1
             const twoAttack = computerTwo.attack(computerOne.gameboard);
-            expect(["hit", "miss"]).toContain(twoAttack);
+            expect(["hit", "miss"]).toContain(twoAttack.result);
         });
     });
 });
