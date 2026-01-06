@@ -9,9 +9,9 @@ import { ComputerPlayer, RealPlayer } from "../models/Player.js";
 // gameSetup.js
 import {
     MAX_PLACEMENT_ATTEMPTS,
-    BOARD_CAPACITY_THRESHOLD,
-    DEFAULT_SHIP_LENGTHS,
+    getShipConfigForBoardSize,
     VALID_DIRECTIONS,
+    BOARD_CAPACITY_THRESHOLD,
 } from "../models/Constants.js";
 
 function pickRandomDirection() {
@@ -35,21 +35,22 @@ function tryPlaceShip(board, length, maxAttempts) {
     }
 }
 
-function placeShipsRandom(boards, shipLengths = DEFAULT_SHIP_LENGTHS) {
+function placeShipsRandom(boards) {
     const maxAttempts = MAX_PLACEMENT_ATTEMPTS;
-    const totalShipCells = shipLengths.reduce((a, b) => a + b, 0);
 
-    // Step 1: Validate ALL boards first
+    // Step 1: Validate all boards can fit ships
     for (let board of boards) {
-        const totalBoardCells = board.size ** 2;
-
-        if (totalShipCells > totalBoardCells * BOARD_CAPACITY_THRESHOLD) {
+        const shipLengths = getShipConfigForBoardSize(board.size);
+        const capacity = shipLengths.reduce((sum, len) => sum + len, 0);
+        const boardCapacity = board.size ** 2;
+        if (capacity / boardCapacity > BOARD_CAPACITY_THRESHOLD) {
             throw new Error("Board too small for these ships");
         }
     }
 
     // Step 2: Only if ALL valid, place ships
     for (let board of boards) {
+        const shipLengths = getShipConfigForBoardSize(board.size);
         for (let len of shipLengths) {
             tryPlaceShip(board, len, maxAttempts);
         }

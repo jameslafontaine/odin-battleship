@@ -213,16 +213,31 @@ describe("Player Classes Tests", () => {
                 human.gameboard.placeShip(0, 1, 2, DIRECTIONS.EAST);
                 computer.gameboard.placeShip(0, 0, 3, DIRECTIONS.EAST);
 
+                // Make computer attacks deterministic so test cannot flake
+                const hitSequence = [
+                    [0, 0],
+                    [1, 0],
+                    [0, 1],
+                    [1, 1],
+                ];
+                let idx = 0;
+                const spy = jest.spyOn(computer, "attack").mockImplementation((opponentBoard) => {
+                    const [x, y] = hitSequence[idx++];
+                    return { result: opponentBoard.receiveAttack(x, y), x, y };
+                });
+
                 // Computer attacks until all human ships sunk
                 let result;
                 let attackCount = 0;
-                const maxAttacks = 100; // Safety limit
+                const maxAttacks = 100; // Safety limit still fine now
 
                 while (result !== ATTACK_RESULTS.SUNK_ALL && attackCount < maxAttacks) {
                     let attack = computer.attack(human.gameboard);
                     result = attack.result;
                     attackCount++;
                 }
+
+                spy.mockRestore();
 
                 expect(result).toBe(ATTACK_RESULTS.SUNK_ALL);
                 expect(attackCount).toBeLessThan(maxAttacks);

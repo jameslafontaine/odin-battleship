@@ -1,7 +1,14 @@
 // gameSetup.test.js
 import { placeShipsRandom, __testing__ } from "../utils/gameSetup.js";
 import Gameboard from "../models/Gameboard.js";
-import { MIN_BOARD_SIZE, MAX_BOARD_SIZE, MAX_PLACEMENT_ATTEMPTS } from "../models/Constants.js";
+import {
+    MIN_BOARD_SIZE,
+    MAX_BOARD_SIZE,
+    MAX_PLACEMENT_ATTEMPTS,
+    getShipConfigForBoardSize,
+    BOARD_CAPACITY_THRESHOLD,
+} from "../models/Constants.js";
+import * as CONSTANTS from "../models/Constants.js";
 
 const { pickRandomDirection, tryPlaceShip } = __testing__;
 
@@ -72,9 +79,10 @@ describe("Game Setup Module Tests", () => {
 
                 placeShipsRandom([board]);
 
-                expect(board.ships).toHaveLength(5);
+                const expected = getShipConfigForBoardSize(board.size);
+                expect(board.ships).toHaveLength(expected.length);
                 const lengths = board.ships.map((ship) => ship.length).sort();
-                expect(lengths).toEqual([2, 2, 3, 4, 5]);
+                expect(lengths).toEqual(expected.slice().sort());
             });
 
             test("places all ships on multiple boards", () => {
@@ -83,60 +91,43 @@ describe("Game Setup Module Tests", () => {
 
                 placeShipsRandom([board1, board2]);
 
-                expect(board1.ships).toHaveLength(5);
-                expect(board2.ships).toHaveLength(5);
+                const expected = getShipConfigForBoardSize(board1.size);
+                expect(board1.ships).toHaveLength(expected.length);
+                expect(board2.ships).toHaveLength(expected.length);
             });
 
-            test("works with custom ship lengths", () => {
-                const board = new Gameboard(MAX_BOARD_SIZE);
-                const customLengths = [3, 3, 2];
+            test("places ships according to lookup table for a non-max board", () => {
+                const board = new Gameboard(MAX_BOARD_SIZE - 2);
+                const expected = getShipConfigForBoardSize(board.size);
 
-                placeShipsRandom([board], customLengths);
+                placeShipsRandom([board]);
 
-                expect(board.ships).toHaveLength(3);
+                expect(board.ships).toHaveLength(expected.length);
                 const lengths = board.ships.map((ship) => ship.length).sort();
-                expect(lengths).toEqual([2, 3, 3]);
+                expect(lengths).toEqual(expected.slice().sort());
             });
 
             test("handles boards of different sizes", () => {
                 const smallBoard = new Gameboard(MIN_BOARD_SIZE + 3);
                 const largeBoard = new Gameboard(MAX_BOARD_SIZE);
-                const shipLengths = [3, 2, 2];
+                const smallExpected = getShipConfigForBoardSize(smallBoard.size);
+                const largeExpected = getShipConfigForBoardSize(largeBoard.size);
 
-                placeShipsRandom([smallBoard, largeBoard], shipLengths);
+                placeShipsRandom([smallBoard, largeBoard]);
 
-                expect(smallBoard.ships).toHaveLength(3);
-                expect(largeBoard.ships).toHaveLength(3);
+                expect(smallBoard.ships).toHaveLength(smallExpected.length);
+                expect(largeBoard.ships).toHaveLength(largeExpected.length);
             });
         });
 
         describe("Validation", () => {
-            test("throws error when board too small for ships", () => {
-                const tinyBoard = new Gameboard(MIN_BOARD_SIZE);
-
-                expect(() => {
-                    placeShipsRandom([tinyBoard]);
-                }).toThrow("Board too small for these ships");
-            });
-
-            test("validates all boards before placing any ships", () => {
-                const validBoard = new Gameboard(MAX_BOARD_SIZE);
-                const invalidBoard = new Gameboard(MIN_BOARD_SIZE);
-
-                expect(() => {
-                    placeShipsRandom([validBoard, invalidBoard]);
-                }).toThrow();
-
-                expect(validBoard.ships).toHaveLength(0);
-            });
-
             test("accepts board at 30% capacity threshold", () => {
                 const board = new Gameboard(MIN_BOARD_SIZE + 3);
-                const shipLengths = [5, 4, 3, 2, 2]; // 16 cells
-                // 8×8 = 64 cells, 30% = 19.2, so 16 should pass
-
+                const expected = getShipConfigForBoardSize(board.size);
+                const capacity = expected.reduce((s, l) => s + l, 0);
+                expect(capacity / board.size ** 2).toBeLessThanOrEqual(BOARD_CAPACITY_THRESHOLD);
                 expect(() => {
-                    placeShipsRandom([board], shipLengths);
+                    placeShipsRandom([board]);
                 }).not.toThrow();
             });
         });
@@ -148,27 +139,32 @@ describe("Game Setup Module Tests", () => {
                 }).not.toThrow();
             });
 
-            test("handles empty ship lengths array", () => {
+            test("handles empty ship lengths from lookup (no ships to place)", () => {
                 const board = new Gameboard(MAX_BOARD_SIZE);
+                const spy = jest.spyOn(CONSTANTS, "getShipConfigForBoardSize").mockReturnValue([]);
 
-                placeShipsRandom([board], []);
+                placeShipsRandom([board]);
 
                 expect(board.ships).toHaveLength(0);
+                spy.mockRestore();
             });
 
-            test("handles single ship", () => {
+            test("handles single ship from lookup", () => {
                 const board = new Gameboard(MAX_BOARD_SIZE);
+                const spy = jest.spyOn(CONSTANTS, "getShipConfigForBoardSize").mockReturnValue([3]);
 
-                placeShipsRandom([board], [3]);
+                placeShipsRandom([board]);
 
                 expect(board.ships).toHaveLength(1);
                 expect(board.ships[0].length).toBe(3);
+                spy.mockRestore();
             });
 
             test("handles many boards", () => {
                 const boards = Array.from({ length: 5 }, () => new Gameboard(MAX_BOARD_SIZE));
-
-                placeShipsRandom(boards, [3, 2]);
+                const spy = jest.spyOn(CONSTANTS, "getShipConfigForBoardSize").mockReturnValue([3, 2]);
+                placeShipsRandom(boards);
+                spy.mockRestore();
 
                 boards.forEach((board) => {
                     expect(board.ships).toHaveLength(2);

@@ -7,7 +7,21 @@ export const DEFAULT_BOARD_SIZE = 10;
 export const MIN_SHIP_LENGTH = 2;
 export const MAX_SHIP_LENGTH = 5;
 export const DEFAULT_SHIP_LENGTH = 2;
-export const DEFAULT_SHIP_LENGTHS = [5, 4, 3, 2, 2];
+export const SHIP_CONFIGURATIONS = {
+    5: [2, 2], // 4 cells = 16% of 25
+    6: [3, 2], // 5 cells = 14% of 36
+    7: [3, 3, 2], // 8 cells = 16% of 49
+    8: [4, 3, 2], // 9 cells = 14% of 64
+    9: [4, 3, 2, 2], // 11 cells = 14% of 81
+    10: [5, 4, 3, 2, 2], // 16 cells = 16% of 100
+};
+
+export function getShipConfigForBoardSize(size) {
+    if (!SHIP_CONFIGURATIONS[size]) {
+        throw new RangeError(`No ship configuration for board size ${size}`);
+    }
+    return SHIP_CONFIGURATIONS[size];
+}
 
 // Game setup
 export const MAX_PLACEMENT_ATTEMPTS = 1000;
